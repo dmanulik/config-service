@@ -28,8 +28,24 @@ cache_config = {
   'CACHE_REDIS_HOST': 'config-service-redis-master',
   'CACHE_REDIS_PORT': 6379,
   'CACHE_REDIS_PASSWORD': redis_pass,
-  "CACHE_DEFAULT_TIMEOUT": 30
+  "CACHE_DEFAULT_TIMEOUT": 10
 }
+
+max_configs = 200
+
+def error_handler(code):
+  statuses = {
+    404: {
+      'message': 'No configs found',
+      'details': "Please specify valid config name" 
+        "in the form: '?config-name=<name_of_config_in_db>'"
+    },
+    422: {
+      'message': 'Items limit exceeded',
+      'details': f"Please query less than {max_configs}"
+    }
+  }
+  return jsonify(statuses[code]), code
 
 cache = Cache(app, config=cache_config)
 
@@ -50,7 +66,35 @@ def get_config():
       return jsonify(error), 400
   
   else: 
-    return "Please specify valid config name in the form: '?config-name=<name_of_config_in_db>'"
+    return error_handler(404)
+  
+@app.route("/get-configs")
+@cache.cached(query_string=True)
+def get_configs():
+  config_name_list = request.args.getlist('config-name')
+  config_names_string = request.args.get('configs-names')
+  if config_names_string:
+    names_list = request.args.get('configs-names').split(',')
+  else:
+    names_list = config_name_list 
+
+  app_configs = list(
+      mongo_db.storage.find(
+        { 'configName': { '$in': names_list } },
+        { 'data': 1, '_id': 0 }
+      )
+    )
+
+  len_app_configs = len(app_configs)
+  if len_app_configs:
+    if len_app_configs > max_configs:
+      return error_handler(422)
+    else:
+      return jsonify({'configs': app_configs})
+  
+  else: 
+    return error_handler(404)
+
 
 @app.route("/healthz")
 def healthz():
