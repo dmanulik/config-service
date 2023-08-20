@@ -1,0 +1,62 @@
+# Default values for config-service.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+mongodb:
+  enabled: true
+  architecture: standalone
+  image:
+    tag: 7.0.0-jammy
+    repository: arm64v8/mongo
+  persistence:
+    mountPath: /data/db
+
+redis:
+  enabled: true
+  replica:
+    replicaCount: 3
+
+configservice:
+  replicaCount: 2
+  image:
+    repository: docker.io/library/config-service
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+
+  imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    name: "config-service"
+
+  podAnnotations: {}
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  service:
+    type: LoadBalancer
+    port: 5055
+    tagetPort: 5000
+
+  resources: {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi

@@ -1,0 +1,9 @@
+{
+  "name": "test-config-1",
+  "version": 1.02,
+  "ads": true,
+  "startView": "Feed",
+  "profile": {
+    "profile_image": "mypic.jpg"
+  }
+}

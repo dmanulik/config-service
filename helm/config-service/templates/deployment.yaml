@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: config-service
+  labels:
+    app: config-service
+spec:
+  replicas: {{ .Values.configservice.replicaCount }}
+  selector:
+    matchLabels:
+      app: config-service
+  template:
+    metadata:
+      labels:
+        app: config-service
+    spec:
+      serviceAccountName: config-service
+      containers:
+      - name: config-service
+        image: "{{ .Values.configservice.image.repository }}:{{ .Values.configservice.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.configservice.image.pullPolicy }}
+        ports:
+          - name: http
+            containerPort: {{ .Values.configservice.service.tagetPort }}
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: http

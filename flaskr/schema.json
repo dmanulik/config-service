@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "version": {
+      "type": "number"
+    },
+    "ads": {
+      "type": "boolean"
+    },
+    "startView": {
+      "type": "string"
+    },
+    "profile": {
+      "type": "object",
+      "properties": {
+        "profile_image": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_image"
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "version",
+    "ads",
+    "startView",
+    "profile"
+  ]
+}
