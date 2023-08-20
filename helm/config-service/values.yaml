@@ -10,11 +10,33 @@ mongodb:
     repository: arm64v8/mongo
   persistence:
     mountPath: /data/db
+  resources:
+    limits:
+      cpu: 300m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
 
 redis:
   enabled: true
+  master:
+    resources:
+      limits:
+        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 50m
+        memory: 100Mi
   replica:
     replicaCount: 3
+    resources:
+      limits:
+        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 50m
+        memory: 100Mi
 
 configservice:
   replicaCount: 2
@@ -53,10 +75,10 @@ configservice:
     port: 5055
     tagetPort: 5000
 
-  resources: {}
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
