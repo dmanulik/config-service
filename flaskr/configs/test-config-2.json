@@ -1,0 +1,9 @@
+{
+  "name": "test-config-2",
+  "version": "1.02",
+  "ads": true,
+  "startView": "Invalid config",
+  "profile": {
+    "profile_image": "mypic.jpg"
+  }
+}

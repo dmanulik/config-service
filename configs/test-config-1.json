@@ -1,9 +1,0 @@
-{
-  "name": "test-config-2-wrong-type",
-  "version": 1.02,
-  "ads": true,
-  "startView": "Feed",
-  "profile": {
-    "profile_image": "mypic.jpg"
-  }
-}

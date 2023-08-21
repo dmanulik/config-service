@@ -1,0 +1,9 @@
+{
+  "name": "test-config-5",
+  "version": 1.02,
+  "ads": true,
+  "startView": "News",
+  "profile": {
+    "profile_image": "welcome.jpg"
+  }
+}

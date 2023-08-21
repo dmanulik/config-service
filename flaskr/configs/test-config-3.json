@@ -1,0 +1,9 @@
+{
+  "name": "test-config-3",
+  "version": 1.22,
+  "ads": true,
+  "startView": "About company",
+  "profile": {
+    "profile_image": "notmypic.jpg"
+  }
+}

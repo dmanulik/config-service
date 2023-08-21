@@ -95,10 +95,37 @@ def get_configs():
   else: 
     return error_handler(404)
 
-
 @app.route("/healthz")
 def healthz():
   return jsonify({'status': 200})
 
+def put_configs():
+  config_batch = []
+  for config_file in [
+    'configs/test-config-1.json', 
+    'configs/test-config-2.json', 
+    'configs/test-config-3.json', 
+    'configs/test-config-4.json', 
+    'configs/test-config-5.json'
+  ]:
+    with open(config_file) as f:
+      file_data = json.load(f)
+      config_batch.append(
+        {
+          'configName': file_data['name'],
+          'data': file_data
+        }
+      )
+      
+  for batch in config_batch:
+    query = {'configName': batch['configName']}
+    newvalues = {"$set": {"data": batch['data']}}
+    mongo_db.storage.update_one(
+      query, 
+      newvalues,
+      upsert=True
+    )
+
 if __name__ == '__main__':
+  put_configs()
   app.run(host='0.0.0.0', port=5000, debug=True)
