@@ -1,45 +1,4 @@
-# Default values for config-service.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-mongodb:
-  enabled: true
-  architecture: standalone
-  updateStrategy:
-    type: Recreate
-  image:
-    tag: 7.0.0-jammy
-    repository: arm64v8/mongo
-  persistence:
-    mountPath: /data/db
-  resources:
-    limits:
-      cpu: 300m
-      memory: 512Mi
-    requests:
-      cpu: 100m
-      memory: 128Mi
-
-redis:
-  enabled: true
-  master:
-    resources:
-      limits:
-        cpu: 100m
-        memory: 256Mi
-      requests:
-        cpu: 50m
-        memory: 100Mi
-  replica:
-    replicaCount: 3
-    resources:
-      limits:
-        cpu: 100m
-        memory: 256Mi
-      requests:
-        cpu: 50m
-        memory: 100Mi
-
+# Main application 
 configservice:
   replicaCount: 2
   image:
@@ -55,20 +14,21 @@ configservice:
   serviceAccount:
     create: true
     annotations: {}
-    name: "config-service"
+    name: ""
 
   podAnnotations: {}
 
-  podSecurityContext: {}
-    # fsGroup: 2000
+  podSecurityContext:
+    fsGroup: 1001
 
-  securityContext: {}
-    # capabilities:
-    #   drop:
-    #   - ALL
-    # readOnlyRootFilesystem: true
-    # runAsNonRoot: true
-    # runAsUser: 1000
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - ALL
+    runAsGroup: 0
+    runAsNonRoot: true
+    runAsUser: 1001
 
   service:
     type: LoadBalancer
@@ -82,3 +42,43 @@ configservice:
     requests:
       cpu: 50m
       memory: 128Mi
+
+# Database
+mongodb:
+  enabled: true
+  architecture: standalone
+  updateStrategy:
+    type: Recreate
+  image:
+    tag: 7.0.0-jammy
+    repository: arm64v8/mongo
+  persistence:
+    mountPath: /data/db
+  resources:
+    limits:
+      cpu: 400m
+      memory: 1024Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+# Cache 
+redis:
+  enabled: true
+  master:
+    resources:
+      limits:
+        cpu: 200m
+        memory: 512Mi
+      requests:
+        cpu: 50m
+        memory: 100Mi
+  replica:
+    replicaCount: 3
+    resources:
+      limits:
+        cpu: 200m
+        memory: 512Mi
+      requests:
+        cpu: 50m
+        memory: 100Mi

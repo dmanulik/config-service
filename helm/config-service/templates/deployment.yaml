@@ -1,22 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: config-service
+  name: {{ include "config-service.fullname" . }}
   labels:
-    app: config-service
+    {{- include "config-service.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.configservice.replicaCount }}
   selector:
     matchLabels:
-      app: config-service
+      {{- include "config-service.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: config-service
+        {{- include "config-service.selectorLabels" . | nindent 8 }}
     spec:
       serviceAccountName: {{ include "config-service.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.configservice.podSecurityContext | nindent 8 }}
       containers:
-      - name: config-service
+      - name: {{ .Chart.Name }}
+        securityContext:
+          {{- toYaml .Values.configservice.securityContext | nindent 12 }}
         image: "{{ .Values.configservice.image.repository }}:{{ .Values.configservice.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: {{ .Values.configservice.image.pullPolicy }}
         ports:
