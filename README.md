@@ -40,3 +40,23 @@ brew install minikube helm
     ├── launcher.sh                  # Main controller
     ├── minikube_helper.sh           # Wrapper for minikube operations
     └── README.md
+
+
+### Important notice (compatibility):
+
+This setup had been created and tested on Macbook with M1 ARM-based chip.
+
+If you want use it on amd64, then you have to change MongoDB image in Helm chart:
+
+```
+  image:
+    tag: 7.0.0-jammy
+    repository: arm64v8/mongo
+```
+
+and use, for example (please note, it's not tested):
+```
+  image:
+    tag: 6.0.8-debian-11-r20
+    repository: bitnami/mongodb
+```
