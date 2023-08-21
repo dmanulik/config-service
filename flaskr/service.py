@@ -9,45 +9,51 @@ from flask import Flask, request, jsonify
 from flask_caching import Cache
 from kubernetes import client, config
 
-mongo_db = pymongo.MongoClient("config-service-mongodb", 27017).configdb
+
+with open('configuration.json') as f:
+  app_config = json.load(f)
+
+mongo_db = pymongo.MongoClient(app_config['mongo_host'], app_config['mongo_port']).configdb
 
 config.load_incluster_config()
 k8s_client = client.CoreV1Api()
 redis_pass = base64.b64decode(
   k8s_client.read_namespaced_secret(
-    'config-service-redis', 
-    namespace='default'
-    ).data['redis-password']).decode('UTF-8')
+    app_config['redis_secret_name'], 
+    namespace=app_config['app_namespace']
+  ).data['redis-password']).decode('UTF-8')
 
-with open('schema.json') as f:
-  schema = json.load(f)
-
-app = Flask(__name__)
 cache_config = {
   'CACHE_TYPE': 'redis', 
-  'CACHE_REDIS_HOST': 'config-service-redis-master',
-  'CACHE_REDIS_PORT': 6379,
+  'CACHE_REDIS_HOST': app_config['redis_host'],
+  'CACHE_REDIS_PORT': app_config['redis_port'],
   'CACHE_REDIS_PASSWORD': redis_pass,
-  "CACHE_DEFAULT_TIMEOUT": 10
+  "CACHE_DEFAULT_TIMEOUT": app_config['app_cache_default_timeout']
 }
-
-max_configs = 200
 
 def error_handler(code):
   statuses = {
     404: {
       'message': 'No configs found',
-      'details': "Please specify valid config name" 
-        "in the form: '?config-name=<name_of_config_in_db>'"
+      'details': "Please check if config name is correct" 
+        "or you are using correct endpoints: "
+        "'get-config?config-name=<name>', "
+        "'get-configs?config-name=<name01>&config-name=<name02>', "
+        "'get-configs?configs-names=<name01>,<name02>'"
     },
     422: {
       'message': 'Items limit exceeded',
-      'details': f"Please query less than {max_configs}"
+      'details': f"Please query less than {app_config['app_multiget_max_configs']}"
     }
   }
   return jsonify(statuses[code]), code
 
+
+app = Flask(__name__)
 cache = Cache(app, config=cache_config)
+
+with open('schema.json') as f:
+  schema = json.load(f)
 
 @app.route("/get-config")
 @cache.cached(query_string=True)
@@ -87,7 +93,7 @@ def get_configs():
 
   len_app_configs = len(app_configs)
   if len_app_configs:
-    if len_app_configs > max_configs:
+    if len_app_configs > app_config['app_multiget_max_configs']:
       return error_handler(422)
     else:
       return jsonify({'configs': app_configs})
@@ -101,13 +107,7 @@ def healthz():
 
 def put_configs():
   config_batch = []
-  for config_file in [
-    'configs/test-config-1.json', 
-    'configs/test-config-2.json', 
-    'configs/test-config-3.json', 
-    'configs/test-config-4.json', 
-    'configs/test-config-5.json'
-  ]:
+  for config_file in app_config['app_config_files']:
     with open(config_file) as f:
       file_data = json.load(f)
       config_batch.append(
@@ -128,4 +128,9 @@ def put_configs():
 
 if __name__ == '__main__':
   put_configs()
-  app.run(host='0.0.0.0', port=5000, debug=True)
+  app.run(
+    host=app_config['app_host'], 
+    port=app_config['app_port'], 
+    debug=app_config['app_debug_enabled'],
+    threaded=app_config['app_threaded_enabled']
+  )

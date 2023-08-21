@@ -1,0 +1,21 @@
+{
+  "mongo_host": "config-service-mongodb",
+  "mongo_port": 27017,
+  "redis_host": "config-service-redis-master",
+  "redis_port": 6379,
+  "redis_secret_name": "config-service-redis",
+  "app_host": "0.0.0.0",
+  "app_port": 5000,
+  "app_debug_enabled": true,
+  "app_namespace": "default",
+  "app_cache_default_timeout": "20",
+  "app_multiget_max_configs": 200,
+  "app_threaded_enabled": true,
+  "app_config_files": [
+    "configs/test-config-1.json", 
+    "configs/test-config-2.json", 
+    "configs/test-config-3.json", 
+    "configs/test-config-4.json", 
+    "configs/test-config-5.json"
+  ]
+}
