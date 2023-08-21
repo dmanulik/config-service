@@ -2,7 +2,7 @@
 Expand the name of the chart.
 */}}
 {{- define "config-service.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- default .Chart.Name .Values.configservice.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
@@ -11,10 +11,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 If release name contains chart name it will be used as a full name.
 */}}
 {{- define "config-service.fullname" -}}
-{{- if .Values.fullnameOverride }}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- if .Values.configservice.fullnameOverride }}
+{{- .Values.configservice.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- $name := default .Chart.Name .Values.nameOverride }}
+{{- $name := default .Chart.Name .Values.configservice.nameOverride }}
 {{- if contains $name .Release.Name }}
 {{- .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -54,9 +54,9 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Create the name of the service account to use
 */}}
 {{- define "config-service.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "config-service.fullname" .) .Values.serviceAccount.name }}
+{{- if .Values.configservice.serviceAccount.create }}
+{{- default (include "config-service.fullname" .) .Values.configservice.serviceAccount.name }}
 {{- else }}
-{{- default "default" .Values.serviceAccount.name }}
+{{- default "default" .Values.configservice.serviceAccount.name }}
 {{- end }}
 {{- end }}

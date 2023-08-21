@@ -14,7 +14,7 @@ spec:
       labels:
         app: config-service
     spec:
-      serviceAccountName: config-service
+      serviceAccountName: {{ include "config-service.serviceAccountName" . }}
       containers:
       - name: config-service
         image: "{{ .Values.configservice.image.repository }}:{{ .Values.configservice.image.tag | default .Chart.AppVersion }}"
