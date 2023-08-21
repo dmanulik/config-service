@@ -1,13 +1,13 @@
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: config-service
-  namespace: default
+  name: {{ include "config-service.fullname" . }}
+  namespace: {{ .Release.Namespace }}
 subjects:
 - kind: ServiceAccount
   name: {{ include "config-service.serviceAccountName" . }}
   apiGroup: ""
 roleRef:
   kind: Role
-  name: config-service
+  name: {{ include "config-service.fullname" . }}
   apiGroup: ""

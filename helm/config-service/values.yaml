@@ -6,21 +6,34 @@ configservice:
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
+  # Names of Kubernetes secrets to which configservice will have access
+  secrets:
+  - config-service-mongodb
+  - config-service-redis
 
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
+  podAnnotations: {}
+
+  probes:
+    livenessProbe:
+      initialDelaySeconds: 15
+    readinessProbe:
+      initialDelaySeconds: 15
+
+  service:
+    type: LoadBalancer
+    port: 5055
+    tagetPort: 5000
 
   serviceAccount:
     create: true
     annotations: {}
     name: ""
 
-  podAnnotations: {}
-
   podSecurityContext:
     fsGroup: 1001
-
   securityContext:
     allowPrivilegeEscalation: false
     capabilities:
@@ -29,11 +42,6 @@ configservice:
     runAsGroup: 0
     runAsNonRoot: true
     runAsUser: 1001
-
-  service:
-    type: LoadBalancer
-    port: 5055
-    tagetPort: 5000
 
   resources:
     limits:

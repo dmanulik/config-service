@@ -1,12 +1,11 @@
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  namespace: default
-  name: config-service
+  namespace: {{ .Release.Namespace }}
+  name: {{ include "config-service.fullname" . }}
 rules:
 - apiGroups: ["*"]
   resources: ["secrets"]
   resourceNames:
-  - config-service-mongodb
-  - config-service-redis
+    {{ toYaml .Values.configservice.secrets | nindent 2 }}
   verbs: ["get", "watch", "list"]

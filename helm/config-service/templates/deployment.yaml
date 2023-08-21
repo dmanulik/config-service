@@ -28,10 +28,12 @@ spec:
             containerPort: {{ .Values.configservice.service.tagetPort }}
             protocol: TCP
         livenessProbe:
+          initialDelaySeconds: {{ .Values.configservice.probes.livenessProbe.initialDelaySeconds }}
           httpGet:
             path: /healthz
             port: http
         readinessProbe:
+          initialDelaySeconds: {{ .Values.configservice.probes.readinessProbe.initialDelaySeconds }}
           httpGet:
             path: /healthz
             port: http
