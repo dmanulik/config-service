@@ -5,6 +5,8 @@
 mongodb:
   enabled: true
   architecture: standalone
+  updateStrategy:
+    type: Recreate
   image:
     tag: 7.0.0-jammy
     repository: arm64v8/mongo

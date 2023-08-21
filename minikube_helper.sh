@@ -15,7 +15,6 @@ minikube_start()
   --cpus=$RESOURCES_CPUS \
   --memory=$RESOURCES_MEM \
   --disk-size=$RESOURCES_DISK
-  eval $(minikube docker-env --profile $PROFILE_NAME)
 }
 
 opt=$1
@@ -32,17 +31,26 @@ case $opt in
     ;;
   delete)
     minikube delete --profile $PROFILE_NAME
-    unset $(env | grep ^DOCKER_ | sed 's/=.*//')
     ;;
   image-load)
-    minikube image load $APP_NAME
+    minikube image load $APP_NAME --profile $PROFILE_NAME
+    ;;
+  source-docker-vars)
+    eval $(minikube docker-env --profile $PROFILE_NAME)
+    ;;
+  unset-docker-vars)
+    unset $(env | grep ^DOCKER_ | sed 's/=.*//')
+    ;;
+  tunnel)
+    minikube tunnel --profile $PROFILE_NAME
+    ;;
+  tunnel-turnoff)
+    kill -9 $(ps -a | grep "[m]inikube_helper.sh tunnel" | awk '{print $1}') || true
+    kill -9 $(ps -a | grep "[m]inikube tunnel --profile $PROFILE_NAME" | awk '{print $1}')
     ;;
   *)
-    printf "ERROR: Unexpected option. \nAvaialable options: 'start', 'status', 'stop', 'delete'"
+    printf "ERROR: Unexpected option '${1}'\n"
+    printf "Avaialable options: 'start', 'status', 'stop', 'delete', 'image-load', 'tunnel', 'tunnel-turnoff'"
     exit 1
     ;;
 esac
-
-
-#--driver='qemu2' \
-#--container-runtime='containerd' \
