@@ -1,0 +1,241 @@
+$ ./curl_tests.sh
++ curl -IL 'http://127.0.0.1:5055/get-config?config-name=test-config-1'
+HTTP/1.1 200 OK
+Server: Werkzeug/2.3.7 Python/3.11.4
+Date: Mon, 21 Aug 2023 17:12:14 GMT
+Content-Type: application/json
+Content-Length: 140
+Connection: close
+
++ curl -IL 'http://127.0.0.1:5055/get-config?config-name=test-config-2'
+HTTP/1.1 400 BAD REQUEST
+Server: Werkzeug/2.3.7 Python/3.11.4
+Date: Mon, 21 Aug 2023 17:12:14 GMT
+Content-Type: application/json
+Content-Length: 81
+Connection: close
+
++ curl -IL 'http://127.0.0.1:5055/get-configs?config-name=test-config-1&config-name=test-config-2'
+HTTP/1.1 200 OK
+Server: Werkzeug/2.3.7 Python/3.11.4
+Date: Mon, 21 Aug 2023 17:12:14 GMT
+Content-Type: application/json
+Content-Length: 464
+Connection: close
+
++ curl -IL 'http://127.0.0.1:5055/get-configs?config-name=test-config-1&config-name=test-config-2&validate=true'
+HTTP/1.1 207 MULTI STATUS
+Server: Werkzeug/2.3.7 Python/3.11.4
+Date: Mon, 21 Aug 2023 17:12:14 GMT
+Content-Type: application/json
+Content-Length: 531
+Connection: close
+
++ curl -IL 'http://127.0.0.1:5055/get-configs?configs-names=test-config-1,test-config-2'
+HTTP/1.1 200 OK
+Server: Werkzeug/2.3.7 Python/3.11.4
+Date: Mon, 21 Aug 2023 17:12:14 GMT
+Content-Type: application/json
+Content-Length: 464
+Connection: close
+
++ curl -IL 'http://127.0.0.1:5055/get-configs?configs-names=test-config-1,test-config-2&validate=true'
+HTTP/1.1 207 MULTI STATUS
+Server: Werkzeug/2.3.7 Python/3.11.4
+Date: Mon, 21 Aug 2023 17:12:14 GMT
+Content-Type: application/json
+Content-Length: 531
+Connection: close
+
++ curl -IL 'http://127.0.0.1:5055/get-configs?configs-names=test-config-1,test-config-2,test-config-3,test-config-4,test-config-5&validate=true'
+HTTP/1.1 207 MULTI STATUS
+Server: Werkzeug/2.3.7 Python/3.11.4
+Date: Mon, 21 Aug 2023 17:12:14 GMT
+Content-Type: application/json
+Content-Length: 1198
+Connection: close
+
++ curl 'http://127.0.0.1:5055/get-config?config-name=test-config-1'
+{
+  "ads": true,
+  "name": "test-config-1",
+  "profile": {
+    "profile_image": "mypic.jpg"
+  },
+  "startView": "Feed",
+  "version": 1.02
+}
++ curl 'http://127.0.0.1:5055/get-config?config-name=test-config-2'
+{
+  "details": "'1.02' is not of type 'number'",
+  "message": "Invalid config"
+}
++ curl 'http://127.0.0.1:5055/get-configs?config-name=test-config-1&config-name=test-config-2'
+{
+  "configs": [
+    {
+      "data": {
+        "ads": true,
+        "name": "test-config-1",
+        "profile": {
+          "profile_image": "mypic.jpg"
+        },
+        "startView": "Feed",
+        "version": 1.02
+      }
+    },
+    {
+      "data": {
+        "ads": true,
+        "name": "test-config-2",
+        "profile": {
+          "profile_image": "mypic.jpg"
+        },
+        "startView": "Invalid config",
+        "version": "1.02"
+      }
+    }
+  ]
+}
++ curl 'http://127.0.0.1:5055/get-configs?config-name=test-config-1&config-name=test-config-2&validate=true'
+{
+  "configs": [
+    {
+      "data": {
+        "ads": true,
+        "name": "test-config-1",
+        "profile": {
+          "profile_image": "mypic.jpg"
+        },
+        "startView": "Feed",
+        "version": 1.02
+      }
+    },
+    {
+      "data": {
+        "ads": true,
+        "name": "test-config-2",
+        "profile": {
+          "profile_image": "mypic.jpg"
+        },
+        "startView": "Invalid config",
+        "version": "1.02"
+      },
+      "warning": "Invalid config: '1.02' is not of type 'number'"
+    }
+  ]
+}
++ curl 'http://127.0.0.1:5055/get-configs?configs-names=test-config-1,test-config-2'
+{
+  "configs": [
+    {
+      "data": {
+        "ads": true,
+        "name": "test-config-1",
+        "profile": {
+          "profile_image": "mypic.jpg"
+        },
+        "startView": "Feed",
+        "version": 1.02
+      }
+    },
+    {
+      "data": {
+        "ads": true,
+        "name": "test-config-2",
+        "profile": {
+          "profile_image": "mypic.jpg"
+        },
+        "startView": "Invalid config",
+        "version": "1.02"
+      }
+    }
+  ]
+}
++ curl 'http://127.0.0.1:5055/get-configs?configs-names=test-config-1,test-config-2&validate=true'
+{
+  "configs": [
+    {
+      "data": {
+        "ads": true,
+        "name": "test-config-1",
+        "profile": {
+          "profile_image": "mypic.jpg"
+        },
+        "startView": "Feed",
+        "version": 1.02
+      }
+    },
+    {
+      "data": {
+        "ads": true,
+        "name": "test-config-2",
+        "profile": {
+          "profile_image": "mypic.jpg"
+        },
+        "startView": "Invalid config",
+        "version": "1.02"
+      },
+      "warning": "Invalid config: '1.02' is not of type 'number'"
+    }
+  ]
+}
++ curl 'http://127.0.0.1:5055/get-configs?configs-names=test-config-1,test-config-2,test-config-3,test-config-4,test-config-5&validate=true'
+{
+  "configs": [
+    {
+      "data": {
+        "ads": true,
+        "name": "test-config-1",
+        "profile": {
+          "profile_image": "mypic.jpg"
+        },
+        "startView": "Feed",
+        "version": 1.02
+      }
+    },
+    {
+      "data": {
+        "ads": true,
+        "name": "test-config-2",
+        "profile": {
+          "profile_image": "mypic.jpg"
+        },
+        "startView": "Invalid config",
+        "version": "1.02"
+      },
+      "warning": "Invalid config: '1.02' is not of type 'number'"
+    },
+    {
+      "data": {
+        "ads": true,
+        "name": "test-config-3",
+        "profile": {
+          "profile_image": "notmypic.jpg"
+        },
+        "startView": "About company",
+        "version": 1.22
+      }
+    },
+    {
+      "data": {
+        "ads": true,
+        "name": "test-config-4",
+        "startView": "Invalid config",
+        "version": 2.02
+      },
+      "warning": "Invalid config: 'profile' is a required property"
+    },
+    {
+      "data": {
+        "ads": true,
+        "name": "test-config-5",
+        "profile": {
+          "profile_image": "welcome.jpg"
+        },
+        "startView": "News",
+        "version": 1.02
+      }
+    }
+  ]
+}

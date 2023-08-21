@@ -6,6 +6,8 @@
 
 ![demo02_app](docs/demo02.gif)
 
+Check `docs/curl_tests_results.txt` for more!
+
 ### Prerequisites
 ```sh
 brew cask install docker
